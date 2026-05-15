@@ -40,9 +40,9 @@
       background: rgba(255,255,255,0.05);
       border: 2px solid rgba(255,255,255,0.1);
       border-radius: 24px;
-      padding: 40px;
+      padding: 32px 40px 40px;
       width: 100%;
-      max-width: 680px;
+      max-width: 760px;
       backdrop-filter: blur(10px);
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     }
@@ -52,52 +52,95 @@
       border-radius: 16px;
       min-height: 120px;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      padding: 20px;
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px 20px;
       margin-bottom: 30px;
       border: 1px solid rgba(255,255,255,0.08);
     }
 
+    .drum-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    .game-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .game-row.show {
+      animation: rowIn 0.4s ease forwards;
+    }
+
+    @keyframes rowIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .game-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #888;
+      min-width: 36px;
+      letter-spacing: 0.5px;
+    }
+
     .ball {
-      width: 72px;
-      height: 72px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
+      font-size: 1rem;
       font-weight: 900;
       color: #fff;
       text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-      box-shadow: inset -4px -4px 10px rgba(0,0,0,0.3), inset 4px 4px 10px rgba(255,255,255,0.25), 0 6px 20px rgba(0,0,0,0.4);
+      box-shadow: inset -3px -3px 8px rgba(0,0,0,0.3), inset 3px 3px 8px rgba(255,255,255,0.25), 0 4px 14px rgba(0,0,0,0.4);
       opacity: 0;
       transform: scale(0) rotate(-180deg);
       transition: none;
       position: relative;
+      flex-shrink: 0;
     }
 
     .ball.show {
-      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
 
     .ball.bonus {
-      border: 3px solid #fff;
+      border: 2px solid #fff;
     }
 
     .ball.bonus::after {
-      content: 'BONUS';
+      content: 'B';
       position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.55rem;
-      font-weight: 700;
-      color: #ffd700;
-      letter-spacing: 1px;
-      white-space: nowrap;
+      top: -8px;
+      right: -4px;
+      width: 14px;
+      height: 14px;
+      background: #ffd700;
+      border-radius: 50%;
+      font-size: 0.5rem;
+      font-weight: 900;
+      color: #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: none;
+    }
+
+    .row-sep {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.25);
+      flex-shrink: 0;
     }
 
     @keyframes popIn {
@@ -120,14 +163,6 @@
     .ball-red     { background: linear-gradient(135deg, #e74c3c, #c0392b); }
     .ball-gray    { background: linear-gradient(135deg, #7f8c8d, #636e72); }
     .ball-green   { background: linear-gradient(135deg, #27ae60, #1e8449); }
-
-    .separator {
-      font-size: 1.8rem;
-      color: rgba(255,255,255,0.3);
-      font-weight: 300;
-      align-self: center;
-      margin-bottom: 20px;
-    }
 
     .controls {
       display: flex;
@@ -178,7 +213,7 @@
     .history {
       margin-top: 40px;
       width: 100%;
-      max-width: 680px;
+      max-width: 760px;
     }
 
     .history h2 {
@@ -201,10 +236,23 @@
       border-radius: 12px;
       padding: 12px 18px;
       display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 6px;
       animation: slideIn 0.3s ease;
+    }
+
+    .history-item-header {
+      font-size: 0.72rem;
+      color: #666;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .history-game-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     @keyframes slideIn {
@@ -271,7 +319,7 @@
 <body>
 
   <h1>🎰 로또 6/45</h1>
-  <p class="subtitle">1~45 중 6개 + 보너스 1개 무작위 추첨</p>
+  <p class="subtitle">5게임 동시 추첨 — 1~45 중 6개 + 보너스</p>
 
   <div class="machine">
     <div class="status" id="status">추첨 버튼을 눌러주세요!</div>
@@ -279,7 +327,7 @@
       <span style="color:#555; font-size:0.9rem;">번호가 여기에 표시됩니다</span>
     </div>
     <div class="controls">
-      <button class="btn btn-draw" id="btnDraw" onclick="draw()">🎲 추첨 시작</button>
+      <button class="btn btn-draw" id="btnDraw" onclick="draw()">🎲 5게임 추첨</button>
       <button class="btn btn-reset" onclick="reset()">↺ 초기화</button>
     </div>
   </div>
@@ -298,6 +346,7 @@
   </div>
 
   <script>
+    const GAME_COUNT = 5;
     let round = 0;
     let isDrawing = false;
 
@@ -316,12 +365,13 @@
         const idx = Math.floor(Math.random() * pool.length);
         picks.push(pool.splice(idx, 1)[0]);
       }
-      const main = picks.slice(0, 6).sort((a, b) => a - b);
-      const bonus = picks[6];
-      return { main, bonus };
+      return {
+        main: picks.slice(0, 6).sort((a, b) => a - b),
+        bonus: picks[6]
+      };
     }
 
-    function makeBallEl(num, isBonus = false, size = 'normal') {
+    function makeBall(num, isBonus = false) {
       const el = document.createElement('div');
       el.className = 'ball ' + getBallClass(num) + (isBonus ? ' bonus' : '');
       el.textContent = num;
@@ -338,84 +388,108 @@
 
       const drum = document.getElementById('drum');
       drum.innerHTML = '';
-      drum.style.animation = 'shake 0.4s ease';
-      setTimeout(() => drum.style.animation = '', 400);
 
       const status = document.getElementById('status');
       status.textContent = '추첨 중...';
 
-      const { main, bonus } = pickNumbers();
+      const games = Array.from({ length: GAME_COUNT }, pickNumbers);
 
-      // Reveal main balls one by one
-      for (let i = 0; i < main.length; i++) {
-        await delay(450);
-        const ball = makeBallEl(main[i]);
-        drum.appendChild(ball);
-        requestAnimationFrame(() => ball.classList.add('show'));
-        status.textContent = `${i + 1}번째 번호: ${main[i]}`;
+      for (let g = 0; g < GAME_COUNT; g++) {
+        const { main, bonus } = games[g];
+
+        status.textContent = `게임 ${g + 1} 추첨 중...`;
+
+        // Create row
+        const row = document.createElement('div');
+        row.className = 'game-row';
+
+        const label = document.createElement('span');
+        label.className = 'game-label';
+        label.textContent = `게임${g + 1}`;
+        row.appendChild(label);
+
+        // Main balls (hidden initially)
+        const balls = main.map(n => makeBall(n));
+        balls.forEach(b => row.appendChild(b));
+
+        const sep = document.createElement('span');
+        sep.className = 'row-sep';
+        sep.textContent = '+';
+        row.appendChild(sep);
+
+        const bonusBall = makeBall(bonus, true);
+        row.appendChild(bonusBall);
+
+        drum.appendChild(row);
+
+        // Animate row appearing
+        await delay(80);
+        requestAnimationFrame(() => row.classList.add('show'));
+
+        // Pop in each ball sequentially
+        for (const ball of [...balls, bonusBall]) {
+          await delay(140);
+          requestAnimationFrame(() => ball.classList.add('show'));
+        }
+
+        await delay(200);
       }
 
-      // Separator
-      await delay(400);
-      const sep = document.createElement('div');
-      sep.className = 'separator';
-      sep.textContent = '+';
-      drum.appendChild(sep);
-
-      // Bonus ball
-      await delay(300);
-      status.textContent = `보너스 번호: ${bonus}`;
-      const bonusBall = makeBallEl(bonus, true);
-      drum.appendChild(bonusBall);
-      requestAnimationFrame(() => bonusBall.classList.add('show'));
-
-      await delay(600);
-      status.textContent = `✨ 행운의 번호: ${main.join(', ')} + 보너스 ${bonus}`;
-
-      addHistory(round, main, bonus);
+      status.textContent = `✨ ${GAME_COUNT}게임 추첨 완료!`;
+      addHistory(round, games);
 
       btn.disabled = false;
       isDrawing = false;
     }
 
-    function addHistory(r, main, bonus) {
+    function addHistory(r, games) {
       const list = document.getElementById('historyList');
       const item = document.createElement('div');
       item.className = 'history-item';
 
-      const roundEl = document.createElement('span');
-      roundEl.className = 'history-round';
-      roundEl.textContent = `#${r}`;
-      item.appendChild(roundEl);
+      const header = document.createElement('div');
+      header.className = 'history-item-header';
+      header.textContent = `#${r}회 추첨`;
+      item.appendChild(header);
 
-      main.forEach(n => {
-        const b = document.createElement('div');
-        b.className = 'mini-ball ' + getBallClass(n);
-        b.textContent = n;
-        item.appendChild(b);
+      games.forEach(({ main, bonus }, i) => {
+        const row = document.createElement('div');
+        row.className = 'history-game-row';
+
+        const lbl = document.createElement('span');
+        lbl.className = 'history-round';
+        lbl.textContent = `G${i + 1}`;
+        row.appendChild(lbl);
+
+        main.forEach(n => {
+          const b = document.createElement('div');
+          b.className = 'mini-ball ' + getBallClass(n);
+          b.textContent = n;
+          row.appendChild(b);
+        });
+
+        const sep = document.createElement('span');
+        sep.className = 'mini-sep';
+        sep.textContent = '+';
+        row.appendChild(sep);
+
+        const bb = document.createElement('div');
+        bb.className = 'mini-ball ' + getBallClass(bonus);
+        bb.textContent = bonus;
+        bb.style.border = '2px solid rgba(255,255,255,0.5)';
+        row.appendChild(bb);
+
+        item.appendChild(row);
       });
 
-      const sepEl = document.createElement('span');
-      sepEl.className = 'mini-sep';
-      sepEl.textContent = '+';
-      item.appendChild(sepEl);
-
-      const bb = document.createElement('div');
-      bb.className = 'mini-ball ' + getBallClass(bonus);
-      bb.textContent = bonus;
-      bb.style.border = '2px solid rgba(255,255,255,0.6)';
-      item.appendChild(bb);
-
       list.insertBefore(item, list.firstChild);
-
-      // Keep max 10 history items
-      while (list.children.length > 10) list.removeChild(list.lastChild);
+      while (list.children.length > 5) list.removeChild(list.lastChild);
     }
 
     function reset() {
       if (isDrawing) return;
       round = 0;
-      document.getElementById('drum').innerHTML = '<span style="color:#555; font-size:0.9rem;">번호가 여기에 표시됩니다</span>';
+      document.getElementById('drum').innerHTML = '<div class="drum-placeholder">번호가 여기에 표시됩니다</div>';
       document.getElementById('status').textContent = '추첨 버튼을 눌러주세요!';
       document.getElementById('historyList').innerHTML = '';
     }
